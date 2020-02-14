@@ -2,12 +2,15 @@ package com.bmsantana.minhasfinancas.service.impl;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.bmsantana.minhasfinancas.exception.ErroAutenticacao;
 import com.bmsantana.minhasfinancas.exception.RegraNegocioException;
 import com.bmsantana.minhasfinancas.model.entity.Usuario;
 import com.bmsantana.minhasfinancas.model.repository.UsuarioRepository;
 import com.bmsantana.minhasfinancas.service.UsuarioService;
 
+@Service
 public class UsuarioServiceImpl implements UsuarioService{
 	
 	private UsuarioRepository repository;	
