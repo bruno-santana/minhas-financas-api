@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bmsantana.minhasfinancas.api.dto.AtualizaStatusDTO;
 import com.bmsantana.minhasfinancas.api.dto.LancamentoDTO;
 import com.bmsantana.minhasfinancas.exception.RegraNegocioException;
 import com.bmsantana.minhasfinancas.model.entity.Lancamento;
@@ -84,6 +85,26 @@ public class LancamentoResource {
 			}
 		}).orElseGet( () -> new ResponseEntity("Lançamento não localizado na base de dados!", HttpStatus.BAD_REQUEST));
 	}
+	
+	@PutMapping("{id}/atualiza-status")
+	public ResponseEntity atualizarStatus(@PathVariable("id") Long id, @RequestBody AtualizaStatusDTO dto) {
+		return service.obterPorId(id).map(entidade -> {
+			StatusLancamento statusSelecionado = StatusLancamento.valueOf(dto.getStatus());
+			
+			if(statusSelecionado == null) {
+				return ResponseEntity.badRequest().body("Não foi possível atualizar o status do lançamento. Informe um tipo de lançamento válido!");
+			}
+			
+			try {
+				entidade.setStatus(statusSelecionado);
+				service.atualizar(entidade);
+				return ResponseEntity.ok(entidade);
+			} catch (RegraNegocioException e) {
+				return ResponseEntity.badRequest().body(e.getMessage());
+			}
+		}).orElseGet( () -> new ResponseEntity("Lançamento não localizado na base de dados!", HttpStatus.BAD_REQUEST));
+	}
+	
 	
 	@DeleteMapping("{id}")
 	public ResponseEntity deletar(@PathVariable("id") Long id) {

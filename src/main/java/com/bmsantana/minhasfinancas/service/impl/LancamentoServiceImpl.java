@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bmsantana.minhasfinancas.exception.RegraNegocioException;
 import com.bmsantana.minhasfinancas.model.entity.Lancamento;
 import com.bmsantana.minhasfinancas.model.enums.StatusLancamento;
+import com.bmsantana.minhasfinancas.model.enums.TipoLancamento;
 import com.bmsantana.minhasfinancas.model.repository.LancamentoRepository;
 import com.bmsantana.minhasfinancas.service.LancamentoService;
 
@@ -97,6 +98,23 @@ public class LancamentoServiceImpl implements LancamentoService{
 	@Override
 	public Optional<Lancamento> obterPorId(Long id) {
 		return repository.findById(id);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obterSaldoPorUsuario(Long id) {
+		BigDecimal receitas = repository.obterSaldoPorTipoEUsuario(id, TipoLancamento.RECEITA);
+		BigDecimal despesas = repository.obterSaldoPorTipoEUsuario(id, TipoLancamento.DESPESA);
+		
+		if(receitas == null) {
+			receitas = BigDecimal.ZERO;
+		}
+		
+		if(despesas == null) {
+			despesas = BigDecimal.ZERO;
+		}
+		
+		return receitas.subtract(receitas);
 	}
 
 }
